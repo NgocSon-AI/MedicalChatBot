@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Medical Chatbot</title>
+  <link rel="stylesheet" href="static/style.css">
+</head>
+<body>
+  <div class="chat-container">
+    <div class="chat-header">
+      🩺 Medical Assistant
+    </div>
+    <div class="chat-box" id="chat-box">
+      <!-- Tin nhắn sẽ hiển thị ở đây -->
+      <div class="message bot">Hello! I'm your medical assistant. How can I help you today?</div>
+    </div>
+    <div class="chat-input">
+      <input type="text" id="user-input" placeholder="Type your symptoms..." />
+      <button onclick="sendMessage()">Send</button>
+    </div>
+  </div>
+
+    <script>
+        function sendMessage() {
+        const input = document.getElementById("user-input");
+        const chatBox = document.getElementById("chat-box");
+        const message = input.value.trim();
+
+        if (message !== "") {
+            const userMsg = document.createElement("div");
+            userMsg.className = "message user";
+            userMsg.textContent = message;
+            chatBox.appendChild(userMsg);
+
+            fetch("/get", {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json"
+            },
+            body: JSON.stringify({ msg: message })
+            })
+            .then(res => res.json())
+            .then(data => {
+            const botMsg = document.createElement("div");
+            botMsg.className = "message bot";
+            botMsg.textContent = data.answer;
+            chatBox.appendChild(botMsg);
+            chatBox.scrollTop = chatBox.scrollHeight;
+            })
+            .catch(err => {
+            console.error(err);
+            });
+
+            input.value = "";
+        }
+        }
+    </script>
+</body>
+</html>
+
+
+<!-- ... các phần HTML trước đó ... -->
